@@ -36,8 +36,8 @@ services:
       - "data:${DATA_VOLUME_CONTAINER}"
       - "/etc/shadow:/etc/shadow:ro"
       - "/etc/passwd:/etc/passwd:ro"
-    #  - "<path_to_the_certificate>:/srv/jupyterhub/secrets/jupyterhub.crt:ro"
-    #  - "<path_to_the_private_key>:/srv/jupyterhub/secrets/jupyterhub.key:ro"
+      - "<path_to_the_certificate>:/srv/jupyterhub/secrets/jupyterhub.crt:ro"
+      - "<path_to_the_private_key>:/srv/jupyterhub/secrets/jupyterhub.key:ro"
 
     ports:
       - "443:443"

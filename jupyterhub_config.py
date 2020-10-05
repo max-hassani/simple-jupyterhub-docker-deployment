@@ -15,7 +15,7 @@ c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
 # Spawn containers from this image
 #c.DockerSpawner.container_image = os.environ['DOCKER_NOTEBOOK_IMAGE']
 #c.DockerSpawner.image_whitelist = {'pyiron-base':'muhhassani/pyiron-base-image','pyiron-atomistic':'muhhassani/pyiron-image'}
-c.DockerSpawner.image_whitelist = {'pyiron-atomistic':'muhhassani/pyiron-image'}
+c.DockerSpawner.image_whitelist = {'pyiron-base':'muhhassani/pyiron-base-image','pyiron-md':'muhhassani/pyiron-lammps-image'}
 # JupyterHub requires a single-user instance of the Notebook server, so we
 # default to using the `start-singleuser.sh` script included in the
 # jupyter/docker-stacks *-notebook images as the Docker run command when
@@ -29,27 +29,9 @@ c.DockerSpawner.use_internal_ip = True
 c.DockerSpawner.network_name = network_name
 # Pass the network name as argument to spawned containers
 c.DockerSpawner.extra_host_config = { 'network_mode': network_name }
-# Explicitly set notebook directory because we'll be mounting a host volume to
-# it.  Most jupyter/docker-stacks *-notebook images run the Notebook server as
-# user `jovyan`, and set the notebook directory to `/home/jovyan/work`.
-# We follow the same convention.
 notebook_dir = os.environ.get('DOCKER_NOTEBOOK_DIR') or '/home/pyiron/'
 c.DockerSpawner.notebook_dir = notebook_dir
-# Mount the real user's Docker volume on the host to the notebook user's
-# notebook directory in the container
-#c.DockerSpawner.volumes = { '/home/{username}/pyiron_docker_workspace/': notebook_dir }
-#c.DockerSpawner.volumes = {
-#                       '/home/{username}/pyiron_docker_workspace/': { 'bind': notebook_dir , 'mode': 'rw'}
-#}
-#,
- #                      '/media/mount_point/': { 'bind': '/home/pyiron_user/shared/', 'mode': 'rw'}
-#}
-#c.DockerSpawner.volumes = {
-#                       'jupyterhub-user-{username}': { 'bind': notebook_dir , 'mode': 'rw'},
-#                       '/media/mount_point/': { 'bind': '/home/pyiron_user/shared/', 'mode': 'rw'}
-#}
-#c.DockerSpawner.volumes = { '/home/{username}/': notebook_dir }
-c.DockerSpawner.volumes = { 'jupyterhub-user-{username}': notebook_dir }
+c.DockerSpawner.volumes = { '/home/{username}/pyiron_docker_workspace/': notebook_dir }
 # volume_driver is no longer a keyword argument to create_container()
 # c.DockerSpawner.extra_create_kwargs.update({ 'volume_driver': 'local' })
 # Remove containers once they are stopped
@@ -88,7 +70,7 @@ c.JupyterHub.db_url = 'postgresql://postgres:{password}@{host}/{db}'.format(
 #c.Spawner.cpu_limit = 2
 # Other stuff
 c.Spawner.cpu_limit = 2
-c.Spawner.mem_limit = '4G'
+c.Spawner.mem_limit = '10G'
 
 # Whitlelist users and admins
 c.Authenticator.whitelist = whitelist = set()

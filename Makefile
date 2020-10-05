@@ -48,12 +48,8 @@ endif
 check-files: userlist $(cert_files) secrets/oauth.env secrets/postgres.env
 
 notebook_image: 
-	docker pull muhhassani/pyiron-image
-#	docker pull muhhassani/pyiron-base-image
-#docker build -t $(LOCAL_NOTEBOOK_IMAGE) \
-#		--build-arg JUPYTERHUB_VERSION=$(JUPYTERHUB_VERSION) \
-#		--build-arg DOCKER_NOTEBOOK_IMAGE=$(DOCKER_NOTEBOOK_IMAGE) \
-#		singleuser
+	docker pull muhhassani/pyiron-base-image
+	docker pull muhhassani/pyiron-lammps-image
 
 build: check-files network volumes
 	docker-compose build
