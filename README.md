@@ -79,7 +79,7 @@ If you want to edit the list of the images available to spawn. In the `jupyterhu
 ```
 c.DockerSpawner.image_whitelist = {'pyiron-base':'muhhassani/pyiron-base-image','pyiron-md':'muhhassani/pyiron-lammps-image'}
 ```   
-6) **Setting users' resources**
+6) **Setting users' resources**  
 In the `jupyterhub_config.py`, one can specify the amount of RAM and cpu to be used for each user. As an example, here we specify 2 cpu and 10GB of RAM for the user.
 ```
 c.Spawner.cpu_limit = 2
