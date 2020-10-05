@@ -65,7 +65,7 @@ and uncomment this line:
 ```  
 #c.DockerSpawner.volumes = { 'jupyterhub-user-{username}': notebook_dir }
 ```  
-The downside, here is that the users can not access their data via ssh, since the docker-volumes belong to root, under `/var/lib/docker/volume/`.  
+The downside, here is that the users can not access their data via ssh, since the docker-volumes belong to root, under `/var/lib/docker/volume/`. In this case, the only way to download/upload data is through the jupyter notebooks/lab interface.  
 3) **Making a userlist**  
 Having all the accounts created, add the names to the file userlist.  
 ```
