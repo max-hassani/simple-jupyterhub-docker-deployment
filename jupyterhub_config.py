@@ -32,6 +32,7 @@ c.DockerSpawner.extra_host_config = { 'network_mode': network_name }
 notebook_dir = os.environ.get('DOCKER_NOTEBOOK_DIR') or '/home/pyiron/'
 c.DockerSpawner.notebook_dir = notebook_dir
 c.DockerSpawner.volumes = { '/home/{username}/pyiron_docker_workspace/': notebook_dir }
+#c.DockerSpawner.volumes = { 'jupyterhub-user-{username}': notebook_dir }
 # volume_driver is no longer a keyword argument to create_container()
 # c.DockerSpawner.extra_create_kwargs.update({ 'volume_driver': 'local' })
 # Remove containers once they are stopped

@@ -25,6 +25,13 @@ $ sudo curl -L "https://github.com/docker/compose/releases/download/1.27.4/docke
 $ sudo chmod +x /usr/local/bin/docker-compose
 ```
 3) At the third step download this repository.  
+```
+git clone https://github.com/muh-hassani/simple-jupyterhub-docker-deployment
+```  
+The repository includes:
+```
+Dockerfile.jupyterhub  Makefile  README.md  docker-compose.yml  jupyterhub_config.py  secrets  userlist
+```
 
 ## Preparing the configuration for the deployment  
 1) Building the jupyterhub + postgres docker image, plus creating the additional docker volumes.  
@@ -46,10 +53,19 @@ sudo passwd "$1"
 sudo passwd --expire "$1"
 ```  
 For example `./bash_file hassani`.  
-Here, I assume that the admin sets an initial password for the user, which is already expired and the user upon the first ssh, will be required to set up a new password.  
+Here, I assume that the admin sets an initial password for the user, which is already expired and the user upon the first ssh, will be required to set up a new password.   
 
-In `/home/<username>/pyiron_docker_workspace` the data from the containers will be saved.
+In `/home/<username>/pyiron_docker_workspace` the data from the containers will be saved. The permissions are set in such a way that the docker container, running by the root, can write the data into this directory.
 
+Since this might open some security issues, you can drop the lines for creating the directory and its permissions above, and as an alternative way use docker-volumes. For this purpose in `jupyterhub_config.py`, you can comment this line:    
+```
+c.DockerSpawner.volumes = { '/home/{username}/pyiron_docker_workspace/': notebook_dir }  
+```
+and uncomment this line:
+```  
+#c.DockerSpawner.volumes = { 'jupyterhub-user-{username}': notebook_dir }
+```  
+The downside, here is that the users can not access their data via ssh, since the docker-volumes belong to root, under `/var/lib/docker/volume/`.  
 3) **Making a userlist**  
 Having all the accounts created, add the names to the file userlist.  
 ```
