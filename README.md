@@ -77,11 +77,12 @@ If any of the username corresponds to the admin, please specify that in the file
 `<username> admin`  
 
 4) **Specifying the path to the ssl certificate and private key**   
-In the docker-compose.yml, give the path to the certificate and key:  
+In the `docker-compose.yml`, give the path to the certificate and key:  
 ```
--<path to the certificate>:/srv/jupyterhub/secrets/jupyterhub.crt  
--<path to the key>:/srv/jupyterhub/secrets/jupyterhub.key
-```  
+-<path to the certificate>:/srv/jupyterhub/secrets/jupyterhub.crt:ro
+-<path to the key>:/srv/jupyterhub/secrets/jupyterhub.key:ro
+```
+The `ro` at the end of these two lines, ensures read-only mode.  
 5) Jupyterhub spawns containers for each users based on the specified docker images in the `jupyterhub_config.py`. To pull the necessary images, you can simply use:  
 ```
 sudo make notebook_image
