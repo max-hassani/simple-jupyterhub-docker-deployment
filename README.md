@@ -34,12 +34,7 @@ Dockerfile.jupyterhub  Makefile  README.md  docker-compose.yml  jupyterhub_confi
 ```
 
 ## Preparing the configuration for the deployment  
-1) Building the jupyterhub + postgres docker image, plus creating the additional docker volumes.  
-To do so, from within the directory of the repository:  
-```
-sudo make build
-```  
-2) **Create the user accounts.**  
+1) **Create the user accounts.**  
 For creating the user account, I use the following bash script. The first argument passed in is the username.  
 ```
 #!/bin/bash
@@ -66,7 +61,7 @@ and uncomment this line:
 #c.DockerSpawner.volumes = { 'jupyterhub-user-{username}': notebook_dir }
 ```  
 The downside, here is that the users can not access their data via ssh, since the docker-volumes belong to root, under `/var/lib/docker/volume/`. In this case, the only way to download/upload data is through the jupyter notebooks/lab interface.  
-3) **Making a userlist**  
+2) **Making a userlist**  
 Having all the accounts created, add the names to the file userlist.  
 ```
 usernam1  admin
@@ -76,13 +71,21 @@ username2
 If any of the username corresponds to the admin, please specify that in the file like:  
 `<username> admin`  
 
-4) **Specifying the path to the ssl certificate and private key**   
+3) **Specifying the path to the ssl certificate and private key**   
 In the `docker-compose.yml`, give the path to the certificate and key:  
 ```
 -<path to the certificate>:/srv/jupyterhub/secrets/jupyterhub.crt:ro
 -<path to the key>:/srv/jupyterhub/secrets/jupyterhub.key:ro
 ```
 The `ro` at the end of these two lines, ensures read-only mode.  
+
+4) **Setting users' resources**  
+In the `jupyterhub_config.py`, one can specify the amount of RAM and cpu to be used for each user. As an example, here we specify 2 cpu and 10GB of RAM for the user.
+```
+c.Spawner.cpu_limit = 2
+c.Spawner.mem_limit = '10G'
+```  
+
 5) Jupyterhub spawns containers for each users based on the specified docker images in the `jupyterhub_config.py`. To pull the necessary images, you can simply use:  
 ```
 sudo make notebook_image
@@ -96,12 +99,12 @@ If you want to edit the list of the images available to spawn. In the `jupyterhu
 ```
 c.DockerSpawner.image_whitelist = {'pyiron-base':'muhhassani/pyiron-base-image','pyiron-md':'muhhassani/pyiron-lammps-image'}
 ```   
-6) **Setting users' resources**  
-In the `jupyterhub_config.py`, one can specify the amount of RAM and cpu to be used for each user. As an example, here we specify 2 cpu and 10GB of RAM for the user.
+
+6) Building the jupyterhub + postgres docker image, plus creating the additional docker volumes.  
+To do so, from within the directory of the repository:  
 ```
-c.Spawner.cpu_limit = 2
-c.Spawner.mem_limit = '10G'
-```
+sudo make build
+``` 
 ## Starting the jupyterhub server
 To start the server, you need to just insert the following command from the directory where you have `docker-compose.yml` file:
 ```
