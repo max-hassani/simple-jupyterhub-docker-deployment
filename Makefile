@@ -48,10 +48,10 @@ endif
 check-files: userlist $(cert_files) secrets/oauth.env secrets/postgres.env
 
 notebook_image1:  pull single-user-base/Dockerfile 
-	docker build -t pyiron-base:latest singl-user-base/
+	docker build -t pyiron-base:latest single-user-base/
 
 notebook_image2:  pull single-user-md/Dockerfile 
-	docker build -t pyiron-md:latest singl-user-md/ 
+	docker build -t pyiron-md:latest single-user-md/ 
 
 
 build: check-files network volumes
