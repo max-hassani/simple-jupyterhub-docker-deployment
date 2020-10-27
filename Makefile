@@ -57,4 +57,4 @@ notebook_image2:  pull single-user-md/Dockerfile
 build: check-files network volumes
 	docker-compose build
 
-.PHONY: network volumes check-files pull notebook_image build
+.PHONY: network volumes check-files pull notebook_image1 notebook_image2 build
