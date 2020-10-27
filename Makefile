@@ -47,9 +47,12 @@ endif
 
 check-files: userlist $(cert_files) secrets/oauth.env secrets/postgres.env
 
-notebook_image: 
-	docker pull muhhassani/pyiron-base-image
-	docker pull muhhassani/pyiron-lammps-image
+notebook_image1:  pull single-user-base/Dockerfile 
+	docker build -t pyiron-base:latest singl-user-base/
+
+notebook_image2:  pull single-user-md/Dockerfile 
+	docker build -t pyiron-md:latest singl-user-md/ 
+
 
 build: check-files network volumes
 	docker-compose build

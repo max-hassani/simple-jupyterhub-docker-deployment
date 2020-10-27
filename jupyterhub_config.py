@@ -14,8 +14,7 @@ c = get_config()
 c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
 # Spawn containers from this image
 #c.DockerSpawner.container_image = os.environ['DOCKER_NOTEBOOK_IMAGE']
-#c.DockerSpawner.image_whitelist = {'pyiron-base':'muhhassani/pyiron-base-image','pyiron-atomistic':'muhhassani/pyiron-image'}
-c.DockerSpawner.image_whitelist = {'pyiron-base':'muhhassani/pyiron-base-image','pyiron-md':'muhhassani/pyiron-lammps-image'}
+c.DockerSpawner.image_whitelist = {'pyiron-base':'pyiron-base:latest','pyiron-md':'pyiron-md:latest'}
 # JupyterHub requires a single-user instance of the Notebook server, so we
 # default to using the `start-singleuser.sh` script included in the
 # jupyter/docker-stacks *-notebook images as the Docker run command when
@@ -31,7 +30,15 @@ c.DockerSpawner.network_name = network_name
 c.DockerSpawner.extra_host_config = { 'network_mode': network_name }
 notebook_dir = os.environ.get('DOCKER_NOTEBOOK_DIR') or '/home/pyiron/'
 c.DockerSpawner.notebook_dir = notebook_dir
-c.DockerSpawner.volumes = { '/home/{username}/pyiron_docker_workspace/': notebook_dir }
+c.DockerSpawner.volumes = {
+                       '/home/{username}/pyiron_docker_workspace/': { 'bind': notebook_dir , 'mode': 'rw'},
+                       '/opt/studentRepo/pyiron/': { 'bind': '/home/pyiron/studentRepo/pyiron/', 'mode': 'ro'},
+                       '/opt/studentRepo/pyiron_contrib/': { 'bind': '/home/pyiron/studentRepo/pyiron_contrib/', 'mode': 'ro'},
+                       '/opt/studentRepo/custom_code/': { 'bind': '/home/pyiron/studentRepo/custom_code/', 'mode': 'ro'},
+}
+# c.DockerSpawner.volumes = { 
+#     '/home/{username}/pyiron_docker_workspace/': notebook_dir 
+#     }
 #c.DockerSpawner.volumes = { 'jupyterhub-user-{username}': notebook_dir }
 # volume_driver is no longer a keyword argument to create_container()
 # c.DockerSpawner.extra_create_kwargs.update({ 'volume_driver': 'local' })
