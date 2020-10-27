@@ -1,7 +1,16 @@
 From pyiron/md:2020-10-26
 
+RUN rm ${HOME}/*.ipynb
+
 USER root
-RUN mkdir ${HOME}/studentRepo/ && \
+RUN apt-get update && \
+    apt install -y nano \
+    vim \
+    build-essential \
+    curl && \
+    apt-get clean && \
+    fix-permissions ${HOME}/ && \
+    mkdir ${HOME}/studentRepo/ && \
     mkdir ${HOME}/studentRepo/pyiron && \
     mkdir ${HOME}/studentRepo/pyiron_contrib/ && \
     mkdir ${HOME}/studentRepo/custom_code/ && \
