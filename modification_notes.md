@@ -41,7 +41,7 @@ sudo make notebook_image2
 ```
 These two commands create two new docker images: pyiron-base:latest and pyiron-md:latest.  
 
-4) First stop the running containers:
+4) Stop the running containers:
 ```
 sudo docker kill jupyterhub
 sudo docker kill jupyterhub-db
