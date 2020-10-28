@@ -7,8 +7,8 @@ sudo groupadd repomanagers
 ```
 Then add the repoadmin and root to the group:
 ```
-sudo chmod -a -G repomanagers repoadmin
-sudo chmod -a -G repomanagers root
+sudo usermod -a -G repomanagers repoadmin
+sudo usermod-a -G repomanagers root
 ```  
 
 2) Now create the central repositories via the following commands:
