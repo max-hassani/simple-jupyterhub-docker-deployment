@@ -16,6 +16,8 @@ services:
       - secrets/postgres.env
     volumes:
       - "db:${DB_VOLUME_CONTAINER}"
+    networks:
+      - internal
 
   hub:
     depends_on:
@@ -36,8 +38,8 @@ services:
       - "data:${DATA_VOLUME_CONTAINER}"
       - "/etc/shadow:/etc/shadow:ro"
       - "/etc/passwd:/etc/passwd:ro"
-      - "<path_to_the_certificate>:/srv/jupyterhub/secrets/jupyterhub.crt:ro"
-      - "<path_to_the_private_key>:/srv/jupyterhub/secrets/jupyterhub.key:ro"
+    networks:
+      - internal
 
     ports:
       - "443:443"
@@ -63,14 +65,13 @@ services:
 
 volumes:
   data:
-    external:
-      name: ${DATA_VOLUME_HOST}
+      name: jupyterhub-data
+      driver: local
   db:
-    external:
-      name: ${DB_VOLUME_HOST}
+      name: jupyterhub-db-data
+      driver: local
 
 networks:
-  default:
-    external:
-      name: ${DOCKER_NETWORK_NAME}
-
+  internal:
+    name: jupyterhub-network
+    driver: bridge

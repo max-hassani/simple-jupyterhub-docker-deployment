@@ -7,13 +7,9 @@ FROM jupyterhub/jupyterhub:master
 ENV CONDA_DIR /opt/conda/
 ENV PATH ${CONDA_DIR}/bin:${PATH}
 ENV SHELL /bin/bash
-ENV PYIRON_USER pyiron
-ENV PYIRON_UID 1000
 ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
-ENV HOME /home/${PYIRON_USER}
-
 
 # Configure Miniconda
 ENV MINICONDA_VER 4.8.2
@@ -46,5 +42,4 @@ COPY ./secrets/*.key $SSL_KEY
 RUN chmod 700 /srv/jupyterhub/secrets && \
     chmod 600 /srv/jupyterhub/secrets/*
 
-COPY ./userlist /srv/jupyterhub/userlist
 COPY jupyterhub_config.py /srv/jupyterhub/jupyterhub_config.py

@@ -3,6 +3,7 @@
 
 # Configuration file for JupyterHub
 import os
+import docker
 
 c = get_config()
 
@@ -15,13 +16,16 @@ c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
 # Spawn containers from this image
 #c.DockerSpawner.container_image = os.environ['DOCKER_NOTEBOOK_IMAGE']
 #c.DockerSpawner.image_whitelist = {'pyiron-base':'muhhassani/pyiron-base-image','pyiron-atomistic':'muhhassani/pyiron-image'}
-c.DockerSpawner.image_whitelist = {'pyiron-base':'muhhassani/pyiron-base-image','pyiron-md':'muhhassani/pyiron-lammps-image'}
+c.DockerSpawner.image_whitelist = {'tensorflow':'muhhassani/nonroot_tensorflow:2021-11-09', 
+			           'temp1':'muhhassani/nonroot_tensorflow:2021-10-18'}
 # JupyterHub requires a single-user instance of the Notebook server, so we
 # default to using the `start-singleuser.sh` script included in the
 # jupyter/docker-stacks *-notebook images as the Docker run command when
 # spawning containers.  Optionally, you can override the Docker run command
 # using the DOCKER_SPAWN_CMD environment variable.
-spawn_cmd = os.environ.get('DOCKER_SPAWN_CMD', "start-singleuser.sh")
+#spawn_cmd = os.environ.get('DOCKER_SPAWN_CMD', "start-singleuser.sh")
+#c.DockerSpawner.extra_create_kwargs.update({ 'command': spawn_cmd })
+spawn_cmd = "start-singleuser.sh --SingleUserNotebookApp.default_url=/lab"
 c.DockerSpawner.extra_create_kwargs.update({ 'command': spawn_cmd })
 # Connect containers to this Docker network
 network_name = os.environ['DOCKER_NETWORK_NAME']
@@ -29,9 +33,9 @@ c.DockerSpawner.use_internal_ip = True
 c.DockerSpawner.network_name = network_name
 # Pass the network name as argument to spawned containers
 c.DockerSpawner.extra_host_config = { 'network_mode': network_name }
-notebook_dir = os.environ.get('DOCKER_NOTEBOOK_DIR') or '/home/pyiron/'
+notebook_dir = os.environ.get('DOCKER_NOTEBOOK_DIR') or '/home/docker_user/'
 c.DockerSpawner.notebook_dir = notebook_dir
-c.DockerSpawner.volumes = { '/home/{username}/pyiron_docker_workspace/': notebook_dir }
+c.DockerSpawner.volumes = { '/home/{username}/docker_workspace/': notebook_dir }
 #c.DockerSpawner.volumes = { 'jupyterhub-user-{username}': notebook_dir }
 # volume_driver is no longer a keyword argument to create_container()
 # c.DockerSpawner.extra_create_kwargs.update({ 'volume_driver': 'local' })
@@ -39,6 +43,15 @@ c.DockerSpawner.volumes = { '/home/{username}/pyiron_docker_workspace/': noteboo
 c.DockerSpawner.remove_containers = True
 # For debugging arguments passed to spawned containers
 c.DockerSpawner.debug = True
+
+c.DockerSpawner.extra_host_config = {
+    "device_requests": [
+        docker.types.DeviceRequest(
+            count=-1,
+            capabilities=[["gpu"]],
+        ),
+    ],
+}
 
 # User containers will access hub by container name on the Docker network
 c.JupyterHub.hub_ip = 'jupyterhub'
@@ -70,22 +83,11 @@ c.JupyterHub.db_url = 'postgresql://postgres:{password}@{host}/{db}'.format(
 #c.Spawner.mem_limit = '10G'
 #c.Spawner.cpu_limit = 2
 # Other stuff
-c.Spawner.cpu_limit = 2
-c.Spawner.mem_limit = '10G'
+#c.Spawner.cpu_limit = 2
+#c.Spawner.mem_limit = '10G'
 
 # Whitlelist users and admins
 c.Authenticator.whitelist = whitelist = set()
-c.Authenticator.admin_users = admin = set()
+#c.Authenticator.admin_users = admin = set()
+c.Authenticator.admin_users = {'localadmin'}
 c.JupyterHub.admin_access = True
-pwd = os.path.dirname(__file__)
-with open(os.path.join(pwd, 'userlist')) as f:
-    for line in f:
-        if not line:
-            continue
-        parts = line.split()
-        # in case of newline at the end of userlist file
-        if len(parts) >= 1:
-            name = parts[0]
-            whitelist.add(name)
-            if len(parts) > 1 and parts[1] == 'admin':
-                admin.add(name)
